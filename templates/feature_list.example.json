@@ -1,0 +1,74 @@
+{
+  "allowed_statuses": ["not-started", "in-progress", "blocked", "pass"],
+  "features": [
+    {
+      "id": "export-report-001",
+      "project": "root",
+      "name": "使用者可以把月報表匯出成 CSV",
+      "status": "in-progress",
+      "description": "讓使用者在報表頁一鍵匯出當月資料，取代目前手動複製的流程。",
+      "projects": ["app", "api"],
+      "dependencies": [],
+      "scope_boundary": [
+        "不做 CSV 以外的格式",
+        "不做跨月份的區間匯出",
+        "不處理既有報表頁的版面問題，另開工作項"
+      ],
+      "plan": "docs/plans/active/export-report-001-csv-export.md",
+      "worktrees": [
+        { "project": "api", "dir": "api-export-report-001", "branch": "feature/export-report-001" },
+        { "project": "app", "dir": "app-export-report-001", "branch": "feature/export-report-001" }
+      ],
+      "completion_criteria": [
+        "api 提供匯出端點，只回傳登入者有權限的資料；其他帳號請求回 403。",
+        "app 報表頁有匯出按鈕，下載的檔案以試算表開啟欄位正確、中文不亂碼。",
+        "資料量超過上限時回明確錯誤訊息，而不是逾時。",
+        "api 部署到測試環境後驗證；app 在實機完成下載流程。",
+        "兩個 repo 的分支都合併回主線，並建立完成文件。"
+      ],
+      "next_action": "執行票 02：在 app worktree 由使用者輸入 /implement，完成報表頁的匯出按鈕。",
+      "evidence": {
+        "api": "票 01 已合併並部署測試環境 HEAD a1b2c3d；預設 gate 217 tests / 215 pass / 2 skip（baseline 相同）；未帶權限請求回 403（log 第 4821 行）。",
+        "app": "尚未開始。",
+        "cross_project": "尚未驗證。"
+      }
+    },
+    {
+      "id": "push-retry-001",
+      "project": "api",
+      "name": "推播發送失敗時自動重試",
+      "status": "blocked",
+      "description": "推播服務暫時失敗時，以指數退避重試三次。",
+      "dependencies": [],
+      "scope_boundary": ["不更換推播服務供應商"],
+      "completion_criteria": [
+        "模擬供應商回 503 時會重試三次，第四次放棄並記錄。",
+        "在測試環境以真實推播金鑰驗證一次成功與一次重試。"
+      ],
+      "next_action": "取得測試環境推播金鑰後，部署並執行重試驗證。",
+      "blocked_reason": "測試環境尚未設定推播服務金鑰，部署後無法驗證。",
+      "resume_condition": "使用者確認測試環境已設定推播金鑰。",
+      "evidence": {
+        "api": "單元測試 12 支全綠；突變驗證：拿掉重試上限 → 測試紅。部署後驗證未執行。"
+      }
+    },
+    {
+      "id": "settings-copy-001",
+      "project": "app",
+      "name": "設定頁文案統一",
+      "status": "not-started",
+      "description": "設定頁的按鈕與說明文字用詞不一致，統一為同一套語彙。",
+      "dependencies": [],
+      "scope_boundary": ["不改版面與互動"],
+      "completion_criteria": ["設定頁所有文案符合語彙表，實機截圖逐頁確認。"],
+      "evidence": {}
+    },
+    {
+      "id": "login-rate-limit-001",
+      "project": "api",
+      "name": "登入失敗次數限制",
+      "status": "pass",
+      "completion_doc": "docs/completed/api/login-rate-limit-001.md"
+    }
+  ]
+}

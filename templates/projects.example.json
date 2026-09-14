@@ -1,0 +1,21 @@
+{
+  "projects": [
+    {
+      "id": "app",
+      "name": "Client App",
+      "path": "app",
+      "base_branch": "develop",
+      "docs": "docs/projects/app/",
+      "verify": "make check"
+    },
+    {
+      "id": "api",
+      "name": "Backend API",
+      "path": "api",
+      "base_branch": "main",
+      "docs": "docs/projects/api/",
+      "verify": "npm run verify"
+    }
+  ],
+  "notes": "verify 一律在該 repo 的 path 底下執行。project 欄的合法值是上面的 id 加上跨 repo 工作用的 root。"
+}

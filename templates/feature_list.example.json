@@ -41,6 +41,9 @@
       "description": "推播服務暫時失敗時，以指數退避重試三次。",
       "dependencies": [],
       "scope_boundary": ["不更換推播服務供應商"],
+      "worktrees": [
+        { "project": "api", "dir": "api-push-retry-001", "branch": "feature/push-retry-001" }
+      ],
       "completion_criteria": [
         "模擬供應商回 503 時會重試三次，第四次放棄並記錄。",
         "在測試環境以真實推播金鑰驗證一次成功與一次重試。"

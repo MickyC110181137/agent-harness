@@ -20,7 +20,7 @@
 5. **`blocked` 不得自行恢復。** 需要恢復條件被外部滿足**且經使用者確認**。若 `resume_condition` 本身已失效（它引用的分支、worktree、環境或票已不存在），維持 blocked、改寫該欄並回報使用者。
 6. **保留使用者既有變更。** clean state 不等於 `git status` 乾淨；與本次工作無關的變更不還原、不刪除、不提交。
 7. **不擴張範圍。** 不順手重構、不擴充未核准的功能、不覆蓋既有工作。改共用函式前先搜尋所有 caller，修共同根因而非單一呼叫點。
-8. **`in-progress` 上限＝目前存在的 worktree 數。** 沒有 worktree 就不該有 `in-progress`。開 worktree 前，該工作項必須已在 `feature_list.json` 建立並提交。
+8. **推進中的工作項上限＝目前存在的 worktree 數。** `in-progress` 與 `blocked` 都必須有 worktree，兩者共用同一份額度；沒有 worktree 就不該有這兩種狀態。轉 `blocked` 不移除 worktree，恢復時才不必重建。開 worktree 前，該工作項必須已在 `feature_list.json` 建立並提交。
 9. **Production 預設唯讀。** 寫入類操作只能依已登記、未過期的具名例外執行，不得以例外為由推導出其他行為。
 
 ## 我現在要做什麼
@@ -60,6 +60,7 @@
 | `docs/adr/` | 長期取捨，單一編號序列，不保存目前狀態 |
 | `CONTEXT.md` | 領域語彙與系統邊界 |
 | `.scratch/` | 拆票的暫存產物，不進版控，不是狀態來源 |
+| `scripts/validate-state.mjs` | 一致性驗證器；收尾時在根目錄跑 `node scripts/validate-state.mjs` |
 
 ## Skill 啟動方式
 

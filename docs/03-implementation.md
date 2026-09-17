@@ -38,7 +38,7 @@ git -C <repo> worktree add ../<repo>-<feature-id> -b feature/<feature-id> <base-
 
 ### 三條不變式
 
-1. **沒有 worktree 就不得 `in-progress`。** 純文件與 harness 狀態檔的維護不開 worktree，因此也不得標記為 `in-progress`。
+1. **沒有 worktree 就不得 `in-progress` 或 `blocked`。** 純文件與 harness 狀態檔的維護不開 worktree，因此也不得標記為這兩種狀態。
 2. **一棵 worktree 只能被一筆工作項認領。**
 3. **一筆工作項在每個涉及的 repo 至多一棵。**
 
@@ -48,7 +48,7 @@ git -C <repo> worktree add ../<repo>-<feature-id> -b feature/<feature-id> <base-
 
 - 多個工作項不會在同一個檢出裡互相覆蓋。
 - 主檢出保留使用者自己的進行中變更，agent 不會碰到。
-- 進行中的數量由真實存在的 worktree 決定，而不是靠自律。
+- 推進中的數量由真實存在的 worktree 決定，而不是靠自律。
 
 ### 新 worktree 的常見坑
 
@@ -114,6 +114,6 @@ seams 在**計畫或票上事先約定**，而不是實作時才決定。這樣�
 | 情況 | 處理 |
 |---|---|
 | 沒有外部阻礙，只是 session 結束 | 維持 `in-progress`，更新 `next_action` 與交接快照 |
-| 有外部阻礙 | 轉 `blocked`，補 `blocked_reason` 與 `resume_condition` |
+| 有外部阻礙 | 轉 `blocked`，補 `blocked_reason` 與 `resume_condition`；worktree 保留 |
 
 兩種情況都不建立完成文件、不封存計畫。細節見 [`handoff-and-cleanup.md`](handoff-and-cleanup.md)。

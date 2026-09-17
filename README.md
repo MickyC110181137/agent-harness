@@ -95,6 +95,7 @@ flowchart LR
 agent-harness/
 ├── README.md                      本頁
 ├── AGENTS.md                      給 agent 讀的入口：不可違反的規則與路由表
+├── init.sh                        驗證入口：範例狀態檢查 + 文件連結檢查
 ├── docs/
 │   ├── 01-state-and-planning.md   ① 狀態與規劃
 │   ├── 02-ticketing.md            ② 拆票
@@ -105,6 +106,9 @@ agent-harness/
 │   ├── handoff-and-cleanup.md     交接與收尾
 │   ├── environment-boundaries.md  環境與權限邊界
 │   └── design-decisions.md        設計取捨
+├── scripts/
+│   ├── validate-state.mjs         一致性驗證器：規則表 19 條不變式的參考實作
+│   └── check-links.mjs            文件內部連結檢查
 └── templates/                     狀態檔、計畫、票、完成文件等範本
 ```
 
@@ -112,9 +116,11 @@ agent-harness/
 
 1. 建立一個 harness 根目錄，把各產品 repo 放在它底下（或旁邊），產品 repo 只保留原始碼與自己的驗證入口。
 2. 複製 `AGENTS.md` 與 `templates/`，依 [`templates/projects.example.json`](templates/projects.example.json) 登記每個 repo。
-3. 依 [`01-state-and-planning.md`](docs/01-state-and-planning.md#一致性驗證器) 的規則表，用專案既有的工具鏈實作驗證器。
+3. 驗證器直接用 [`scripts/validate-state.mjs`](scripts/validate-state.mjs)（無第三方依賴），在 harness 根目錄跑 `node scripts/validate-state.mjs`；要換語言就照 [`01-state-and-planning.md`](docs/01-state-and-planning.md#一致性驗證器) 的規則表重寫。
 4. 安裝 [mattpocock/skills](https://github.com/mattpocock/skills)，讓 `to-tickets`、`implement`、`diagnosing-bugs` 可用。
 
 ## 致謝
+
+harness 的概念框架來自 [walkinglabs/learn-harness-engineering](https://github.com/walkinglabs/learn-harness-engineering)：把 agent 的可靠性拆成**指令、狀態、驗證、範圍、生命週期**五個子系統。本 repo 的四段流程與支撐機制就是照這個骨架長出來的。
 
 拆票與實作使用 [mattpocock/skills](https://github.com/mattpocock/skills) 的 engineering skills。本 repo 的貢獻在於把這些 skill 放進一套有狀態模型、驗證規則與交接機制的完整流程。

@@ -4,7 +4,7 @@
 
 ## 範圍規則
 
-- **一次推進的量由 worktree 決定。** `in-progress` 的上限是目前存在的 worktree 數量，見 [狀態模型](01-state-and-planning.md#狀態轉換)。
+- **一次推進的量由 worktree 決定。** `in-progress` 與 `blocked` 共用同一份額度，上限是目前存在的 worktree 數量，見 [狀態模型](01-state-and-planning.md#狀態轉換)。
 - **不擴張範圍。** 不順手重構、不擴充未核准的功能、不覆蓋既有工作。範圍外的問題記進 `scope_boundary` 或另開工作項。
 - **修共同根因。** 改共用函式前先搜尋所有 caller。
 - **保留使用者既有變更。** clean state 不等於 `git status` 乾淨。
@@ -39,7 +39,7 @@
 
 | 情況 | 處理 |
 |---|---|
-| 有外部阻礙 | `blocked`，補 `blocked_reason` 與 `resume_condition`，**不得自行恢復** |
+| 有外部阻礙 | `blocked`，補 `blocked_reason` 與 `resume_condition`，保留 worktree，**不得自行恢復** |
 | 沒有外部阻礙，但工作階段結束 | 維持 `in-progress`，更新唯一的 `next_action` 與交接快照 |
 
 兩種情況都**不**建立完成文件、**不**封存計畫、**不**把過程紀錄移出 `progress.md`。

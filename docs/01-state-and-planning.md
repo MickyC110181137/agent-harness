@@ -51,7 +51,7 @@
 | `dependencies` | 前置工作項；沒有就是空陣列 |
 | `scope_boundary` | **本次刻意不處理的範圍** |
 | `plan` | 指向 `docs/plans/active/` 底下的計畫；沒有計畫就不填 |
-| `worktrees` | 見 [③ 實作](03-implementation.md#worktree-隔離)；`in-progress` 必填 |
+| `worktrees` | 見 [③ 實作](03-implementation.md#worktree-隔離)；`in-progress` 與 `blocked` 必填 |
 | `completion_criteria` | **可觀察、可驗證**的完成條件 |
 | `next_action` | **唯一、具體、可直接執行**的下一步；`in-progress` 與 `blocked` 必填 |
 | `blocked_reason`、`resume_condition` | `blocked` 必填 |
@@ -79,7 +79,7 @@ not-started ──> in-progress ──> pass
 | 轉換 | 條件 |
 |---|---|
 | `not-started → in-progress` | 工作項已提交、worktree 已建立、`next_action` 已填 |
-| `in-progress → blocked` | 遇到外部阻礙，補 `blocked_reason` 與 `resume_condition` |
+| `in-progress → blocked` | 遇到外部阻礙，補 `blocked_reason` 與 `resume_condition`；**worktree 保留不移除** |
 | `blocked → in-progress` | 恢復條件被外部滿足**且經使用者確認**；agent 不得自行恢復 |
 | `in-progress → pass` | 滿足 [Definition of Done](definition-of-done.md) 的每一條 |
 | 中途停止但沒有外部阻礙 | **維持** `in-progress`，更新 `next_action` 與交接快照 |
@@ -127,6 +127,8 @@ not-started ──> in-progress ──> pass
 - 失敗時**非零結束**，每筆診斷寫到 stderr，格式 `<project>/<id>.<rule>: <message>`，能直接定位到哪筆工作、哪條規則。
 - 納入根目錄的驗證入口，每次收尾都要跑。
 
+參考實作：[`scripts/validate-state.mjs`](../scripts/validate-state.mjs)，19 條規則逐條對應下表。在 harness 根目錄跑 `node scripts/validate-state.mjs`；本 repo 沒有活的狀態檔，[`init.sh`](../init.sh) 改以 `--shape-only` 驗證 `templates/` 的範例。
+
 ### 規則表
 
 | 規則 | 觸發條件 |
@@ -141,7 +143,7 @@ not-started ──> in-progress ──> pass
 | `state.blocked-fields` | `blocked` 缺 `blocked_reason` 或 `resume_condition` |
 | `state.plan` | `plan` 指向的檔案不存在 |
 | `state.plan-status` | 未完成工作項的 `plan` 不在 `docs/plans/active/` 底下 |
-| `state.worktree-required` | `in-progress` 沒有 `worktrees` |
+| `state.worktree-required` | `in-progress` 或 `blocked` 沒有 `worktrees` |
 | `state.worktree-claimed` | 兩筆工作項認領同一棵 worktree |
 | `state.worktree-dir` | 宣告的 worktree 目錄不存在 |
 | `state.worktree-branch` | 分支名不等於 `feature/<feature-id>` |
@@ -153,5 +155,5 @@ not-started ──> in-progress ──> pass
 
 實作時的兩個細節：
 
-- **沒有固定的 `in-progress` 上限。** `worktree-required`（沒有 worktree 就不能進行中）加上 `worktree-claimed`（一棵 worktree 只能被一筆認領），合起來就是「上限＝worktree 棵數」。
+- **沒有固定的上限。** `worktree-required`（沒有 worktree 就不能 `in-progress` 或 `blocked`）加上 `worktree-claimed`（一棵 worktree 只能被一筆認領），合起來就是「推進中的工作項上限＝worktree 棵數」。`blocked` 保留 worktree，因此同樣佔用額度。
 - **比對 id 要以界定符號包住**（例如反引號），不能用裸子字串：`abc-001` 會誤中 `xabc-001`。

@@ -40,6 +40,7 @@ agent 的 session 會中斷、會被重開、會換人接手。這份規範讓**
 - `blocked` 必須有具體的外部阻礙（`blocked_reason`）與可判定的恢復條件（`resume_condition`）。
 - **不得自行恢復。** 恢復需要條件被外部滿足**且經使用者確認**。
 - 恢復前先確認 `resume_condition` **本身還成立**：它引用的分支、worktree、環境或票若已不存在，維持 `blocked`、改寫該欄並回報使用者，不得據此判定可以恢復。
+- **轉 `blocked` 不移除 worktree。** 恢復時直接接續，不必重建分支與環境；代價是它會佔住一份 worktree 額度，這是刻意的壓力。
 - 交接快照的最上方列出所有 blocked 工作項，讓接手的人第一眼看到。
 
 ## 收尾清單
@@ -81,10 +82,10 @@ Clean state 不代表 `git status` 必須沒有變更：使用者既有或與本
 
 ### 3. Worktree 一致性
 
-- [ ] `in-progress` 的工作項在 `worktrees` 列出每一棵，且每棵目錄真的存在。
-- [ ] 沒有兩筆 `in-progress` 認領同一棵 worktree。
+- [ ] `in-progress` 與 `blocked` 的工作項在 `worktrees` 列出每一棵，且每棵目錄真的存在。
+- [ ] 沒有兩筆工作項認領同一棵 worktree。
 - [ ] 每棵 worktree 的分支都是 `feature/<feature-id>`。
-- [ ] 沒有殘留、不屬於任何 `in-progress` 工作項的 worktree 目錄；有的話移除並 `git worktree prune`。
+- [ ] 沒有殘留、不屬於任何 `in-progress` 或 `blocked` 工作項的 worktree 目錄；有的話移除並 `git worktree prune`。
 
 ### 4. 驗證
 

@@ -43,9 +43,9 @@
 
 **情境**　「同時只能有一個進行中」在單一 repo 時很合理，但跨 repo 的工作項天生就要同時動兩個檢出，而兩個互不相關的工作項平行也不衝突。
 
-**決定**　不設固定上限，改由兩條結構性規則推導：**沒有 worktree 就不能 `in-progress`**，**一棵 worktree 只能被一筆工作項認領**。上限自然等於真實存在的 worktree 數。
+**決定**　不設固定上限，改由兩條結構性規則推導：**沒有 worktree 就不能 `in-progress` 或 `blocked`**，**一棵 worktree 只能被一筆工作項認領**。上限自然等於真實存在的 worktree 數。`blocked` 保留 worktree，因此同樣佔用額度。
 
-**代價**　純文件或 harness 本身的維護不開 worktree，因此即使正在做也不能標 `in-progress`，只能停在 `not-started` 直到收尾——這在語意上有點反直覺。
+**代價**　純文件或 harness 本身的維護不開 worktree，因此即使正在做也不能標 `in-progress`，只能停在 `not-started` 直到收尾——這在語意上有點反直覺。另外 `blocked` 會佔住額度、排擠新工作，這是刻意的：要嘛解除阻礙，要嘛收掉，不讓它無限累積。
 
 ---
 

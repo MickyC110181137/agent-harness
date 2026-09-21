@@ -67,11 +67,12 @@ flowchart LR
 
 驗證分三層，缺一不可：
 
-| 層 | 內容 |
-|---|---|
-| 靜態與單元 | 各 repo 的預設 gate；改動前先跑 baseline，既有失敗點名、不混入本次結果 |
+
+| 層         | 內容                                                                           |
+| ---------- | ------------------------------------------------------------------------------ |
+| 靜態與單元 | 各 repo 的預設 gate；改動前先跑 baseline，既有失敗點名、不混入本次結果         |
 | 部署後環境 | 部署到測試環境後，**對部署後的服務**驗證；不得以本機分支程式碼連線測試環境代替 |
-| 實機 | 行為變更在實機驗證；模擬器只能驗畫面 |
+| 實機       | 行為變更在實機驗證；模擬器只能驗畫面                                           |
 
 每項證據都要能指到 **log 行、資料列、截圖或 commit**，不接受一句「已驗證」；不適用的項目明確記為 skipped 並寫原因。全部通過、分支合併、完成文件寫好，工作項才能結案。
 
@@ -81,13 +82,14 @@ flowchart LR
 
 四段流程之外，下列規範讓流程在長時間、多 session 下仍然成立：
 
-| 文件 | 解決什麼問題 |
-|---|---|
-| [`definition-of-done.md`](docs/definition-of-done.md) | 「程式改完」不等於「工作完成」：結案的七個條件 |
-| [`evaluator-rubric.md`](docs/evaluator-rubric.md) | 里程碑驗收：六面向 0–2 分，Accept／Revise／Block；產出的 agent 不能當唯一評審 |
-| [`handoff-and-cleanup.md`](docs/handoff-and-cleanup.md) | 中斷交接、blocked 規則、每次收尾的清單 |
-| [`environment-boundaries.md`](docs/environment-boundaries.md) | Production 預設唯讀，寫入只能依有到期日的具名授權 |
-| [`design-decisions.md`](docs/design-decisions.md) | 每條規則背後的「為什麼」與付出的代價 |
+
+| 文件                                                          | 解決什麼問題                                                                   |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| [`definition-of-done.md`](docs/definition-of-done.md)         | 「程式改完」不等於「工作完成」：結案的七個條件                                 |
+| [`evaluator-rubric.md`](docs/evaluator-rubric.md)             | 里程碑驗收：六面向 0–2 分，Accept／Revise／Block；產出的 agent 不能當唯一評審 |
+| [`handoff-and-cleanup.md`](docs/handoff-and-cleanup.md)       | 中斷交接、blocked 規則、每次收尾的清單                                         |
+| [`environment-boundaries.md`](docs/environment-boundaries.md) | Production 預設唯讀，寫入只能依有到期日的具名授權                              |
+| [`design-decisions.md`](docs/design-decisions.md)             | 每條規則背後的「為什麼」與付出的代價                                           |
 
 ## Repo 結構
 
@@ -111,13 +113,6 @@ agent-harness/
 │   └── check-links.mjs            文件內部連結檢查
 └── templates/                     狀態檔、計畫、票、完成文件等範本
 ```
-
-## 套用到自己的專案
-
-1. 建立一個 harness 根目錄，把各產品 repo 放在它底下（或旁邊），產品 repo 只保留原始碼與自己的驗證入口。
-2. 複製 `AGENTS.md` 與 `templates/`，依 [`templates/projects.example.json`](templates/projects.example.json) 登記每個 repo。
-3. 驗證器直接用 [`scripts/validate-state.mjs`](scripts/validate-state.mjs)（無第三方依賴），在 harness 根目錄跑 `node scripts/validate-state.mjs`；要換語言就照 [`01-state-and-planning.md`](docs/01-state-and-planning.md#一致性驗證器) 的規則表重寫。
-4. 安裝 [mattpocock/skills](https://github.com/mattpocock/skills)，讓 `to-tickets`、`implement`、`diagnosing-bugs` 可用。
 
 ## 致謝
 
